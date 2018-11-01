@@ -1,11 +1,13 @@
 package temper
 // #cgo CFLAGS: -g -Wall
-// #cgo LDFLAGS: -ltemper
+// #cgo LDFLAGS: -ltemper -lusb
 // #include <temper.h>
 // #include <stdlib.h>
+// #include <usb.h>
 import "C"
 import (
 	"errors"
+	"log"
 	"strconv"
 )
 
@@ -20,8 +22,12 @@ type Readings struct {
 
 func New(devicenum, timeout int ) *Temper {
 	t := Temper{}
-	t.t = C.TemperCreateFromDeviceNumber(C.int(devicenum), C.int(timeout), 1)
+	var err error
+	_, err = C.usb_get_busses()
+	log.Println(err)
+	t.t, err = C.TemperCreateFromDeviceNumber(C.int(devicenum), C.int(timeout * 1000), 1)
 	if t.t == nil {
+		log.Println(err)
 		return nil
 	}
 	return &t
