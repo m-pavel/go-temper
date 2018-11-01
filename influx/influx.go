@@ -81,9 +81,9 @@ func daemonf(iserver, db string, interval int, debug bool) {
 			point, err := client.NewPoint(db,
 				map[string]string{},
 				map[string]interface{}{
-					"temper_t": float32(rd.Temp),
-					"temper_h": float32(rd.Rh),
-					"temper_d": float32(rd.Dew()),
+					"temper_t":  rd.Temp,
+					"temper_h":  rd.Rh,
+					"temper_dp": rd.Dew(),
 				},
 				time.Now())
 			if err != nil {
