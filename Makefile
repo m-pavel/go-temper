@@ -15,7 +15,7 @@ build: deps
 
 temper:
 	git clone https://github.com/m-pavel/HID-TEMPerHUM
-	cd ${TEMPER} && make && ${CC} -shared -o libtemper.so temper
+	cd ${TEMPER} && make
 
 temper-clean:
 	rm -rf ./${TEMPER}
