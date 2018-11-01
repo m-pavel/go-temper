@@ -58,7 +58,7 @@ func (t *Temper) Read() (*Readings, error) {
 	if (res != 0) {
 		return nil, errors.New(strconv.Itoa(int(res)))
 	}
-	return &Readings{}, nil
+	return &Readings{Temp: float32(tm), Rh: float32(h)}, nil
 }
 
 
