@@ -5,11 +5,6 @@ package temper
 // #include <stdlib.h>
 // #include <usb.h>
 import "C"
-import (
-	"errors"
-	"log"
-	"strconv"
-)
 
 type Temper struct {
 	t *C.Temper
@@ -20,55 +15,43 @@ type Readings struct {
 	Rh float32
 }
 
-func New(devicenum, timeout int ) *Temper {
+func New(devicenum, timeout int ) (*Temper, error) {
 	t := Temper{}
 	var err error
 	_, err = C.usb_set_debug(0);
-	if t.t == nil {
-		log.Println(err)
+	if err != nil {
+		return nil, err
 	}
 	_, err = C.usb_init();
-	if t.t == nil {
-		log.Println(err)
+	if err != nil {
+		return nil, err
 	}
 	_, err = C.usb_find_busses();
-	if t.t == nil {
-		log.Println(err)
+	if err != nil {
+		return nil, err
 	}
 	_, err = C.usb_find_devices();
-
-	res, err := C.usb_get_busses()
-	log.Println(err)
-	log.Println(res)
-	t.t, err = C.TemperCreateFromDeviceNumber(C.int(devicenum), C.int(timeout * 1000), 1)
-	if t.t == nil {
-		log.Println(err)
-		return nil
+	if err != nil {
+		return nil, err
 	}
-	return &t
+
+	t.t, err = C.TemperCreateFromDeviceNumber(C.int(devicenum), C.int(timeout * 1000), 0)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
 }
 
-func (t *Temper) Close() {
-	C.TemperFree(t.t)
+func (t *Temper) Close() error{
+	_, err := C.TemperFree(t.t)
+	return err
 }
 
 func (t *Temper) Read() (*Readings, error) {
 	var tm, h C.double
-	res := C.TemperGetTempAndRelHum(t.t, &tm, &h)
-	if (res != 0) {
-		return nil, errors.New(strconv.Itoa(int(res)))
+	_, err := C.TemperGetTempAndRelHum(t.t, &tm, &h)
+	if (err != nil) {
+		return nil, err
 	}
 	return &Readings{Temp: float32(tm), Rh: float32(h)}, nil
 }
-
-
-/*
-Temper *TemperCreateFromDeviceNumber(int deviceNum, int timeout, int debug);
-void TemperFree(Temper *t);
-
-int TemperGetTemperatureInC(Temper *t, double *tempC);
-int TempterGetOtherStuff(Temper *t, char *buf, int length);
-
-int TemperGetTempAndRelHum(Temper *t, double *tempC, double *relhum);
-
- */
