@@ -23,8 +23,23 @@ type Readings struct {
 func New(devicenum, timeout int ) *Temper {
 	t := Temper{}
 	var err error
-	_, err = C.usb_get_busses()
+	_, err = C.usb_set_debug(0);
+	if t.t == nil {
+		log.Println(err)
+	}
+	_, err = C.usb_init();
+	if t.t == nil {
+		log.Println(err)
+	}
+	_, err = C.usb_find_busses();
+	if t.t == nil {
+		log.Println(err)
+	}
+	_, err = C.usb_find_devices();
+
+	res, err := C.usb_get_busses()
 	log.Println(err)
+	log.Println(res)
 	t.t, err = C.TemperCreateFromDeviceNumber(C.int(devicenum), C.int(timeout * 1000), 1)
 	if t.t == nil {
 		log.Println(err)
