@@ -30,28 +30,24 @@ func New(devicenum, timeout int, debug bool) (*Temper, error) {
 		if debug {
 			log.Println(err)
 		}
-		return nil, err
 	}
 	_, err = C.usb_init()
 	if err != nil {
 		if debug {
 			log.Println(err)
 		}
-		return nil, err
 	}
 	_, err = C.usb_find_busses()
 	if err != nil {
 		if debug {
 			log.Println(err)
 		}
-		return nil, err
 	}
 	_, err = C.usb_find_devices()
 	if err != nil {
 		if debug {
 			log.Println(err)
 		}
-		return nil, err
 	}
 
 	t.t, err = C.TemperCreateFromDeviceNumber(C.int(devicenum), C.int(timeout*1000), C.int(cdbg))
@@ -59,6 +55,8 @@ func New(devicenum, timeout int, debug bool) (*Temper, error) {
 		if debug {
 			log.Println(err)
 		}
+	}
+	if t.t == nil {
 		return nil, err
 	}
 	return &t, nil
