@@ -18,6 +18,8 @@ func main() {
 	var notdaemonize = flag.Bool("n", false, "Do not do to background.")
 	var signal = flag.String("s", "", `send signal to the daemon stop — shutdown`)
 	var iserver = flag.String("influx", "http://localhost:8086", "Influx DB endpoint")
+	var idb = flag.String("db", "tion", "Influx DB")
+
 	var interval = flag.Int("interval", 10, "Interval secons")
 	flag.Parse()
 	daemon.AddCommand(daemon.StringFlag(signal, "stop"), syscall.SIGTERM, termHandler)
@@ -52,11 +54,10 @@ func main() {
 		}
 	}
 
-	daemonf(*iserver, *interval)
-
+	daemonf(*iserver, *idb, *interval)
 }
 
-func daemonf(iserver string, interval int) {
+func daemonf(iserver, db string, interval int) {
 	var err error
 	cli, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: iserver,
@@ -77,7 +78,7 @@ func daemonf(iserver string, interval int) {
 		if err != nil {
 			log.Println(err)
 		} else {
-			point, err := client.NewPoint("tion",
+			point, err := client.NewPoint(db,
 				map[string]string{},
 				map[string]interface{}{
 					"temper_t": rd.Temp,
