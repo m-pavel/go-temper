@@ -83,7 +83,7 @@ func daemonf(iserver, db string, interval int, debug bool) {
 				map[string]interface{}{
 					"temper_t": rd.Temp,
 					"temper_h": rd.Rh,
-					"temper_d": 0,
+					"temper_d": rd.Dew(),
 				},
 				time.Now())
 			if err != nil {

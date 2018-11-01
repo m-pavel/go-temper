@@ -6,15 +6,18 @@ package temper
 // #include <stdlib.h>
 // #include <usb.h>
 import "C"
-import "log"
+import (
+	"log"
+	"math"
+)
 
 type Temper struct {
 	t *C.Temper
 }
 
 type Readings struct {
-	Temp float32
-	Rh   float32
+	Temp float64
+	Rh   float64
 }
 
 func New(devicenum, timeout int, debug bool) (*Temper, error) {
@@ -73,5 +76,17 @@ func (t *Temper) Read() (*Readings, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Readings{Temp: float32(tm), Rh: float32(h)}, nil
+	return &Readings{Temp: float64(tm), Rh: float64(h)}, nil
+}
+
+func (r Readings) Dew() float64 {
+	var tn, m float64
+	if r.Temp > 0 {
+		tn = 243.12
+		m = 17.62
+	} else {
+		tn = 272.62
+		m = 22.46
+	}
+	return tn * (math.Log(r.Rh/100) + (m * r.Temp / (tn + r.Temp))) / (m - math.Log(r.Rh/100) - (m * r.Temp / (tn + r.Temp)))
 }
