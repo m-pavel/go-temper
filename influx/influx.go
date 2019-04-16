@@ -73,11 +73,17 @@ func daemonf(iserver, db string, interval int, debug bool) {
 	}
 	defer t.Close()
 
+	failcnt := 0
 	for {
+		if failcnt >= 15 {
+			return
+		}
 		rd, err := t.Read()
 		if err != nil {
 			log.Println(err)
+			failcnt += 1
 		} else {
+			failcnt = 0
 			point, err := client.NewPoint(db,
 				map[string]string{},
 				map[string]interface{}{
