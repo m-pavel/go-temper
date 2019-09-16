@@ -67,7 +67,7 @@ func (t *nTemper) Read() (*temper.Readings, error) {
 		return nil, se
 	}
 
-	time.Sleep(400 * time.Microsecond)
+	time.Sleep(400 * time.Millisecond)
 
 	err := t.getData()
 
