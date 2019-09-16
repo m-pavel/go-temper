@@ -19,8 +19,8 @@ var (
 )
 
 func main() {
-	var logf = flag.String("log", "influxtemper.log", "log")
-	var pid = flag.String("pid", "influxtemper.pid", "pid")
+	var logf = flag.String("log", "tempermqtt.log", "log")
+	var pid = flag.String("pid", "tempermqtt.pid", "pid")
 	var notdaemonize = flag.Bool("n", false, "Do not do to background.")
 	var signal = flag.String("s", "", `send signal to the daemon stop — shutdown`)
 	var iserver = flag.String("mqtt", "tcp://localhost:1883", "MQTT endpoint")
