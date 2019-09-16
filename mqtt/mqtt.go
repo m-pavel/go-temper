@@ -8,7 +8,6 @@ import (
 	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
-	"github.com/influxdata/influxdb/client/v2"
 	"github.com/m-pavel/go-temper/pkg-native"
 	"github.com/sevlyar/go-daemon"
 )
@@ -70,13 +69,6 @@ type TemperMqtt struct {
 
 func daemonf(iserver, db string, interval int, debug bool) {
 	var err error
-	cli, err := client.NewHTTPClient(client.HTTPConfig{
-		Addr: iserver,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer cli.Close()
 
 	t, err := tempern.New(0, 5, debug)
 	if err != nil {
