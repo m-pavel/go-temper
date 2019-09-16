@@ -22,8 +22,8 @@ func main() {
 	var pid = flag.String("pid", "tempermqtt.pid", "pid")
 	var notdaemonize = flag.Bool("n", false, "Do not do to background.")
 	var signal = flag.String("s", "", `send signal to the daemon stop — shutdown`)
-	var iserver = flag.String("mqtt", "tcp://localhost:1883", "MQTT endpoint")
-	var idb = flag.String("t", "nn/temper", "MQTT topic")
+	var mqtt = flag.String("mqtt", "tcp://localhost:1883", "MQTT endpoint")
+	var topic = flag.String("t", "nn/temper", "MQTT topic")
 	var debug = flag.Bool("d", false, "debug")
 	var interval = flag.Int("interval", 10, "Interval secons")
 	flag.Parse()
@@ -59,7 +59,7 @@ func main() {
 		}
 	}
 
-	daemonf(*iserver, *idb, *interval, *debug)
+	daemonf(*mqtt, *topic, *interval, *debug)
 }
 
 type TemperMqtt struct {
@@ -67,7 +67,7 @@ type TemperMqtt struct {
 	Rh   float64
 }
 
-func daemonf(iserver, db string, interval int, debug bool) {
+func daemonf(mqtt, topic string, interval int, debug bool) {
 	var err error
 
 	t, err := tempern.New(0, 5, debug)
@@ -78,9 +78,8 @@ func daemonf(iserver, db string, interval int, debug bool) {
 
 	failcnt := 0
 
-	opts := MQTT.NewClientOptions().AddBroker("tcp://localhost:1883")
+	opts := MQTT.NewClientOptions().AddBroker(mqtt)
 	opts.SetClientID("temper-go-cli")
-	topic := "nn/sensors"
 	client := MQTT.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
