@@ -13,6 +13,7 @@ import (
 
 type nTemper struct {
 	dev   *gousb.Device
+	ctx   *gousb.Context
 	debug bool
 }
 
@@ -22,16 +23,15 @@ const (
 )
 
 func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
-	ctx := gousb.NewContext()
-	defer ctx.Close()
+	nt := nTemper{debug: debug}
+	nt.ctx = gousb.NewContext()
 
 	if debug {
-		ctx.Debug(3)
+		nt.ctx.Debug(3)
 	}
 
-	nt := nTemper{debug: debug}
 	var err error
-	nt.dev, err = ctx.OpenDeviceWithVIDPID(VENDOR_ID, PRODUCT_ID)
+	nt.dev, err = nt.ctx.OpenDeviceWithVIDPID(VENDOR_ID, PRODUCT_ID)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +42,11 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 }
 
 func (t *nTemper) Close() error {
+	if t.dev != nil {
+		t.dev.Close()
+		t.dev = nil
+		return t.ctx.Close()
+	}
 	return nil
 }
 
