@@ -110,6 +110,7 @@ func daemonf(mqtt, topic string, u, p string, interval int, debug bool) {
 			tkn := client.Publish(topic, 0, false, &mqt)
 			if debug {
 				log.Println(tkn)
+				log.Println(tkn.Error())
 			}
 		}
 
