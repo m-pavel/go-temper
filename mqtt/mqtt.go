@@ -9,7 +9,7 @@ import (
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/influxdata/influxdb/client/v2"
-	"github.com/m-pavel/go-temper/pkg-c"
+	"github.com/m-pavel/go-temper/pkg-native"
 	"github.com/sevlyar/go-daemon"
 )
 
@@ -78,7 +78,7 @@ func daemonf(iserver, db string, interval int, debug bool) {
 	}
 	defer cli.Close()
 
-	t, err := temperc.New(0, 5, debug)
+	t, err := tempern.New(0, 5, debug)
 	if err != nil {
 		log.Fatal(err)
 	}
