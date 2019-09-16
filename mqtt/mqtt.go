@@ -65,8 +65,8 @@ func main() {
 }
 
 type TemperMqtt struct {
-	Temp float64
-	Rh   float64
+	Temp float64 `json:"temp"`
+	Rh   float64 `json:"rh"`
 }
 
 func daemonf(mqtt, topic string, u, p string, interval int, debug bool) {
