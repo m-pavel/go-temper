@@ -91,7 +91,7 @@ func (t *nTemper) getData() (*temper.Readings, error) {
 	}
 
 	readings := temper.Readings{}
-	temperature := (buf[1] & 0xFF) + (buf[0] << 8)
+	temperature := (uint16(buf[1]) & 0xFF) + (uint16(buf[0]) << 8)
 	fmt.Println(temperature)
 	readings.Temp = -39.7 + .01*float64(temperature)
 
