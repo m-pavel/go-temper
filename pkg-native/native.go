@@ -69,18 +69,7 @@ func (t *nTemper) Read() (*temper.Readings, error) {
 
 	time.Sleep(400 * time.Millisecond)
 
-	err := t.getData()
-
-	/* Numerical constants below come from the Sensirion SHT1x
-	datasheet (Table 9 for temperature and Table 6 for humidity */
-	//temperature = (buf[1] & 0xFF) + (buf[0] << 8);
-	//*tempC = -39.7 + .01*temperature;
-	//
-	//rh = (buf[3] & 0xFF) + ((buf[2] & 0xFF) << 8);
-	//temp_hum = -2.0468 + 0.0367*rh - 1.5955e-6*rh*rh;
-	//*relhum = (*tempC-25)*(.01 + .00008 * rh) + temp_hum;
-
-	return nil, err
+	return t.getData()
 }
 
 func (t *nTemper) sendCommand(v ...byte) error {
@@ -91,10 +80,22 @@ func (t *nTemper) sendCommand(v ...byte) error {
 	return err
 }
 
-func (t *nTemper) getData() error {
+func (t *nTemper) getData() (*temper.Readings, error) {
 	buf := make([]byte, 256)
 	n, err := t.dev.Control(0xa1, 1, 0x300, 0x01, buf)
-	fmt.Println(n)
-	fmt.Println(buf)
-	return err
+	if err != nil {
+		return nil, err
+	}
+	if t.debug {
+		fmt.Println("Read %d bytes: %v", n, buf)
+	}
+
+	readings := temper.Readings{}
+	temperature := (buf[1] & 0xFF) + (buf[0] << 8)
+	readings.Temp = -39.7 + .01*float64(temperature)
+
+	rh := (buf[3] & 0xFF) + ((buf[2] & 0xFF) << 8)
+	thum := -2.0468 + 0.0367*float64(rh) - 1.5955e-6*float64(rh)*float64(rh)
+	readings.Rh = (readings.Temp-25)*(.01+.00008*float64(rh)) + thum
+	return &readings, nil
 }
