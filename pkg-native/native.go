@@ -93,7 +93,8 @@ func (t *nTemper) sendCommand(v ...byte) error {
 
 func (t *nTemper) getData() error {
 	buf := make([]byte, 256)
-	_, err := t.dev.Control(0xa1, 1, 0x300, 0x01, buf)
+	n, err := t.dev.Control(0xa1, 1, 0x300, 0x01, buf)
+	fmt.Println(n)
 	fmt.Println(buf)
 	return err
 }
