@@ -87,11 +87,12 @@ func (t *nTemper) getData() (*temper.Readings, error) {
 		return nil, err
 	}
 	if t.debug {
-		fmt.Println("Read %d bytes: %v", n, buf)
+		fmt.Printf("Read %d bytes: %v\n", n, buf)
 	}
 
 	readings := temper.Readings{}
 	temperature := (buf[1] & 0xFF) + (buf[0] << 8)
+	fmt.Println(temperature)
 	readings.Temp = -39.7 + .01*float64(temperature)
 
 	rh := (buf[3] & 0xFF) + ((buf[2] & 0xFF) << 8)
