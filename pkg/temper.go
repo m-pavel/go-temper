@@ -8,20 +8,14 @@ package temper
 import "C"
 import (
 	"log"
-	"math"
 )
 
-type Temper struct {
+type cTemper struct {
 	t *C.Temper
 }
 
-type Readings struct {
-	Temp float64
-	Rh   float64
-}
-
-func New(devicenum, timeout int, debug bool) (*Temper, error) {
-	t := Temper{}
+func New(devicenum, timeout int, debug bool) (Temper, error) {
+	t := cTemper{}
 	var err error
 	cdbg := 0
 	if debug {
@@ -65,28 +59,16 @@ func New(devicenum, timeout int, debug bool) (*Temper, error) {
 	return &t, nil
 }
 
-func (t *Temper) Close() error {
+func (t *cTemper) Close() error {
 	_, err := C.TemperFree(t.t)
 	return err
 }
 
-func (t *Temper) Read() (*Readings, error) {
+func (t *cTemper) Read() (*Readings, error) {
 	var tm, h C.double
 	_, err := C.TemperGetTempAndRelHum(t.t, &tm, &h)
 	if err != nil {
 		return nil, err
 	}
 	return &Readings{Temp: float64(tm), Rh: float64(h)}, nil
-}
-
-func (r Readings) Dew() float64 {
-	var tn, m float64
-	if r.Temp > 0 {
-		tn = 243.12
-		m = 17.62
-	} else {
-		tn = 272.62
-		m = 22.46
-	}
-	return tn * (math.Log(r.Rh/100) + (m * r.Temp / (tn + r.Temp))) / (m - math.Log(r.Rh/100) - (m * r.Temp / (tn + r.Temp)))
 }
