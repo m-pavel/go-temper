@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/influxdata/influxdb/client/v2"
-	"github.com/m-pavel/go-temper/pkg"
+	"github.com/m-pavel/go-temper/pkg-c"
 	"github.com/sevlyar/go-daemon"
 )
 
@@ -67,7 +67,7 @@ func daemonf(iserver, db string, interval int, debug bool) {
 	}
 	defer cli.Close()
 
-	t, err := temper.New(0, 5, debug)
+	t, err := temperc.New(0, 5, debug)
 	if err != nil {
 		log.Fatal(err)
 	}

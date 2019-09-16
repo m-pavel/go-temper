@@ -3,11 +3,11 @@ package cli
 import (
 	"fmt"
 
-	"github.com/m-pavel/go-temper/pkg"
+	"github.com/m-pavel/go-temper/pkg-native"
 )
 
 func main() {
-	tm, err := temper.NewNative(0, 0, true)
+	tm, err := tempern.New(0, 0, true)
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,4 @@
-package temper
+package tempern
 
 import (
 	"errors"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/gousb"
+	"github.com/m-pavel/go-temper/pkg"
 )
 
 type nTemper struct {
@@ -20,7 +21,7 @@ const (
 	PRODUCT_ID gousb.ID = 0x660c
 )
 
-func NewNative(devicenum, timeout int, debug bool) (Temper, error) {
+func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	ctx := gousb.NewContext()
 	defer ctx.Close()
 
@@ -44,7 +45,7 @@ func (t *nTemper) Close() error {
 	return nil
 }
 
-func (t *nTemper) Read() (*Readings, error) {
+func (t *nTemper) Read() (*temper.Readings, error) {
 
 	if se := t.sendCommand(10, 11, 12, 13, 0, 0, 2, 0); se != nil {
 		return nil, se

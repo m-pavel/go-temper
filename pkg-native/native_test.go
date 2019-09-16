@@ -1,4 +1,4 @@
-package temper
+package tempern
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestNative1(t *testing.T) {
-	tm, err := NewNative(0, 0, true)
+	tm, err := New(0, 0, true)
 	if err != nil {
 		t.Fatal(err)
 	}

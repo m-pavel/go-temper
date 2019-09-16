@@ -1,4 +1,4 @@
-package temper
+package temperc
 
 // #cgo CFLAGS: -g -Wall
 // #cgo LDFLAGS: -ltemper -lusb
@@ -8,13 +8,15 @@ package temper
 import "C"
 import (
 	"log"
+
+	"github.com/m-pavel/go-temper/pkg"
 )
 
 type cTemper struct {
 	t *C.Temper
 }
 
-func New(devicenum, timeout int, debug bool) (Temper, error) {
+func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	t := cTemper{}
 	var err error
 	cdbg := 0
@@ -64,11 +66,11 @@ func (t *cTemper) Close() error {
 	return err
 }
 
-func (t *cTemper) Read() (*Readings, error) {
+func (t *cTemper) Read() (*temper.Readings, error) {
 	var tm, h C.double
 	_, err := C.TemperGetTempAndRelHum(t.t, &tm, &h)
 	if err != nil {
 		return nil, err
 	}
-	return &Readings{Temp: float64(tm), Rh: float64(h)}, nil
+	return &temper.Readings{Temp: float64(tm), Rh: float64(h)}, nil
 }
