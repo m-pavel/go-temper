@@ -107,7 +107,10 @@ func daemonf(mqtt, topic string, u, p string, interval int, debug bool) {
 			mqt := TemperMqtt{Temp: rd.Temp, Rh: rd.Rh}
 
 			failcnt = 0
-			client.Publish(topic, 0, false, &mqt)
+			tkn := client.Publish(topic, 0, false, &mqt)
+			if debug {
+				log.Println(tkn)
+			}
 		}
 
 		time.Sleep(time.Duration(interval) * time.Second)
