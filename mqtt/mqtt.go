@@ -7,6 +7,8 @@ import (
 	"syscall"
 	"time"
 
+	"encoding/json"
+
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/m-pavel/go-temper/pkg-native"
 	"github.com/sevlyar/go-daemon"
@@ -107,7 +109,12 @@ func daemonf(mqtt, topic string, u, p string, interval int, debug bool) {
 			mqt := TemperMqtt{Temp: rd.Temp, Rh: rd.Rh}
 
 			failcnt = 0
-			tkn := client.Publish(topic, 0, false, &mqt)
+			bp, err := json.Marshal(&mqt)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			tkn := client.Publish(topic, 0, false, bp)
 			if debug {
 				log.Println(tkn)
 				log.Println(tkn.Error())
