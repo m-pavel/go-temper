@@ -90,11 +90,15 @@ func daemonf(mqtt, topic string, interval int, debug bool) {
 			return
 		}
 		rd, err := t.Read()
-		mqt := TemperMqtt{Temp: rd.Temp, Rh: rd.Rh}
 		if err != nil {
 			log.Println(err)
 			failcnt += 1
 		} else {
+			if debug {
+				log.Println(rd)
+			}
+			mqt := TemperMqtt{Temp: rd.Temp, Rh: rd.Rh}
+
 			failcnt = 0
 			client.Publish(topic, 0, false, &mqt)
 		}
