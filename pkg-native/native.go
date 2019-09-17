@@ -12,9 +12,12 @@ import (
 )
 
 type nTemper struct {
-	dev   *gousb.Device
-	ctx   *gousb.Context
-	debug bool
+	dev *gousb.Device
+	ctx *gousb.Context
+
+	cfg      *gousb.Config
+	if1, if2 *gousb.Interface
+	debug    bool
 }
 
 const (
@@ -39,15 +42,15 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 		return nil, errors.New("No TEMPERHum device found.")
 	}
 
-	cfg, err := nt.dev.Config(1)
+	nt.cfg, err = nt.dev.Config(1)
 	if err != nil {
 		return nil, err
 	}
-	_, err = cfg.Interface(0, 0)
+	nt.if1, err = nt.cfg.Interface(0, 0)
 	if err != nil {
 		return nil, err
 	}
-	_, err = cfg.Interface(1, 0)
+	nt.if2, err = nt.cfg.Interface(1, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +60,9 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 
 func (t *nTemper) Close() error {
 	if t.dev != nil {
+		t.if1.Close()
+		t.if2.Close()
+		t.cfg.Close()
 		t.dev.Close()
 		t.dev = nil
 		return t.ctx.Close()
