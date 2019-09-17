@@ -39,7 +39,5 @@ func (ts TemperService) Close() error {
 }
 
 func main() {
-	hs := TemperService{}
-	hmss := ghm.NewStub(&hs)
-	hmss.Main()
+	ghm.NewStub(&TemperService{}).Main()
 }
