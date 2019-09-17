@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/m-pavel/go-temper/pkg-native"
 )
 
 func main() {

@@ -38,6 +38,20 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	if nt.dev == nil {
 		return nil, errors.New("No TEMPERHum device found.")
 	}
+
+	cfg, err := nt.dev.Config(1)
+	if err != nil {
+		return nil, err
+	}
+	_, err = cfg.Interface(0, 0)
+	if err != nil {
+		return nil, err
+	}
+	_, err = cfg.Interface(1, 0)
+	if err != nil {
+		return nil, err
+	}
+
 	return &nt, nil
 }
 
