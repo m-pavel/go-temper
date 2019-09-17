@@ -7,6 +7,7 @@ all: temper test build
 
 deps:
 	${GF} go get -v -d ./...
+
 test: deps
 	${GF} go test -v $$(go list ./... | grep -v /vendor/)
 
