@@ -19,13 +19,13 @@ type TemperService struct {
 func (ts TemperService) PrepareCommandLineParams() {}
 func (ts TemperService) Name() string              { return "temper" }
 
-func (ts *TemperService) Init(client MQTT.Client, topic, topicc, topica string, debug bool) error {
+func (ts *TemperService) Init(client MQTT.Client, topic, topicc, topica string, debug bool, ss ghm.SendState) error {
 	var err error
 	ts.t, err = tempern.New(0, 0, debug)
 	return err
 }
 
-func (ts TemperService) Do(client MQTT.Client, ss ghm.SendState) (interface{}, error) {
+func (ts TemperService) Do() (interface{}, error) {
 	rd, err := ts.t.Read()
 	if err != nil {
 		return nil, err
