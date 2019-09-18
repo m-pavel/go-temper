@@ -25,7 +25,7 @@ func (ts *TemperService) Init(client MQTT.Client, topic, topicc, topica string, 
 	return err
 }
 
-func (ts TemperService) Do(client MQTT.Client) (interface{}, error) {
+func (ts TemperService) Do(client MQTT.Client, ss ghm.SendState) (interface{}, error) {
 	rd, err := ts.t.Read()
 	if err != nil {
 		return nil, err
