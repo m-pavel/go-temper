@@ -34,24 +34,23 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	}
 
 	var err error
-	nt.dev, err = nt.ctx.OpenDeviceWithVIDPID(VENDOR_ID, PRODUCT_ID)
-	if err != nil {
+	if nt.dev, err = nt.ctx.OpenDeviceWithVIDPID(VENDOR_ID, PRODUCT_ID); err != nil {
 		return nil, err
 	}
 	if nt.dev == nil {
 		return nil, errors.New("No TEMPERHum device found.")
 	}
 
-	nt.cfg, err = nt.dev.Config(1)
-	if err != nil {
+	if err = nt.dev.SetAutoDetach(true); err != nil {
 		return nil, err
 	}
-	nt.if1, err = nt.cfg.Interface(0, 0)
-	if err != nil {
+	if nt.cfg, err = nt.dev.Config(1); err != nil {
 		return nil, err
 	}
-	nt.if2, err = nt.cfg.Interface(1, 0)
-	if err != nil {
+	if nt.if1, err = nt.cfg.Interface(0, 0); err != nil {
+		return nil, err
+	}
+	if nt.if2, err = nt.cfg.Interface(1, 0); err != nil {
 		return nil, err
 	}
 
@@ -102,11 +101,9 @@ func (t *nTemper) sendCommand(v ...byte) error {
 
 func (t *nTemper) getData() (*temper.Readings, error) {
 	buf := make([]byte, 256)
-	n, err := t.dev.Control(0xa1, 1, 0x300, 0x01, buf)
-	if err != nil {
+	if n, err := t.dev.Control(0xa1, 1, 0x300, 0x01, buf); err != nil {
 		return nil, err
-	}
-	if t.debug {
+	} else if t.debug {
 		fmt.Printf("Read %d bytes: %v\n", n, buf)
 	}
 
