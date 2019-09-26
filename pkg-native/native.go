@@ -22,11 +22,6 @@ type nTemper struct {
 	debug    bool
 }
 
-const (
-	VENDOR_ID  gousb.ID = 0x1130
-	PRODUCT_ID gousb.ID = 0x660c
-)
-
 func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	nt := nTemper{debug: debug}
 	nt.ctx = gousb.NewContext()
@@ -36,7 +31,7 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	}
 
 	var err error
-	if nt.dev, err = nt.ctx.OpenDeviceWithVIDPID(VENDOR_ID, PRODUCT_ID); err != nil {
+	if nt.dev, err = nt.ctx.OpenDeviceWithVIDPID(temper.VENDOR_ID, temper.PRODUCT_ID); err != nil {
 		return nil, err
 	}
 	if nt.dev == nil {

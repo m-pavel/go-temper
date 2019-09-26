@@ -1,6 +1,21 @@
 package temper
 
-import "math"
+import (
+	"math"
+
+	"github.com/google/gousb"
+)
+
+const (
+	VENDOR_ID  gousb.ID = 0x1130
+	PRODUCT_ID gousb.ID = 0x660c
+)
+
+const (
+	CMD1 = "\x0a\x0b\x0c\x0d\x00\x00\x02\x00"
+	CMD0 = "\x00\x00\x00\x00\x00\x00\x00\x00"
+	CMD2 = "\x0a\x0b\x0c\x0d\x00\x00\x01\x00"
+)
 
 type Readings struct {
 	Temp float64
