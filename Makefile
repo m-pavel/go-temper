@@ -14,8 +14,11 @@ test: deps
 build: deps
 	${GF} go build -o temper-influx-cli ./influx
 	${GF} go build -o temper-mqtt-cli ./mqtt
+
+cli: deps
 	${GF} go build -o cli-native ./cli/native
 	${GF} go build -o cli-c ./cli/c
+	${GF} go build -o cli-hid ./cli/hid
 
 temper:
 	git clone https://github.com/m-pavel/HID-TEMPerHUM
