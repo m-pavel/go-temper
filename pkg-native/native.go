@@ -107,11 +107,11 @@ func (t *nTemper) read(cb byte) (*temper.Readings, error) {
 		return nil, se
 	}
 	for i := 0; i < 7; i++ {
-		if se := t.sendCommand(temper.CMD0); se != nil {
+		if se := t.sendCommand([]byte(temper.CMD0)); se != nil {
 			return nil, se
 		}
 	}
-	if se := t.sendCommand(temper.CMD2); se != nil {
+	if se := t.sendCommand([]byte(temper.CMD2)); se != nil {
 		return nil, se
 	}
 
