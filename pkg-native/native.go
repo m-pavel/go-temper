@@ -98,18 +98,20 @@ func (t *nTemper) Read() (*temper.Readings, error) {
 
 func (t *nTemper) read(cb byte) (*temper.Readings, error) {
 
-	if se := t.sendCommand(10, 11, 12, 13, 0, 0, 2, 0); se != nil {
+	if se := t.sendCommand([]byte(temper.CMD1)); se != nil {
 		return nil, se
 	}
-	if se := t.sendCommand(cb, 0, 0, 0, 0, 0, 0, 0); se != nil {
+	req := []byte(temper.CMD0)
+	req[0] = cb
+	if se := t.sendCommand(req); se != nil {
 		return nil, se
 	}
 	for i := 0; i < 7; i++ {
-		if se := t.sendCommand(0, 0, 0, 0, 0, 0, 0, 0); se != nil {
+		if se := t.sendCommand(temper.CMD0); se != nil {
 			return nil, se
 		}
 	}
-	if se := t.sendCommand(10, 11, 12, 13, 0, 0, 1, 0); se != nil {
+	if se := t.sendCommand(temper.CMD2); se != nil {
 		return nil, se
 	}
 
@@ -118,7 +120,7 @@ func (t *nTemper) read(cb byte) (*temper.Readings, error) {
 	return t.getData()
 }
 
-func (t *nTemper) sendCommand(v ...byte) error {
+func (t *nTemper) sendCommand(v []byte) error {
 	if t.debug {
 		fmt.Printf("sending bytes %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x\n", v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7])
 	}
