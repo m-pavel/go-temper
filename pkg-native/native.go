@@ -7,6 +7,8 @@ import (
 
 	"time"
 
+	"log"
+
 	"github.com/google/gousb"
 	"github.com/m-pavel/go-temper/pkg"
 )
@@ -42,39 +44,69 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	}
 
 	if err = nt.dev.SetAutoDetach(true); err != nil {
+		nt.dev.Close()
 		return nil, err
 	}
 	if nt.cfg, err = nt.dev.Config(1); err != nil {
+		nt.Close()
 		return nil, err
 	}
 	if nt.if1, err = nt.cfg.Interface(0, 0); err != nil {
+		nt.Close()
 		return nil, err
 	}
 	if nt.if2, err = nt.cfg.Interface(1, 0); err != nil {
+		nt.Close()
 		return nil, err
 	}
 
+	if _, err = nt.read(0x52); err != nil {
+		nt.Close()
+		return nil, err
+	}
 	return &nt, nil
 }
 
 func (t *nTemper) Close() error {
-	if t.dev != nil {
+	if t.if1 != nil {
 		t.if1.Close()
+		t.if1 = nil
+	}
+	if t.if2 != nil {
 		t.if2.Close()
-		t.cfg.Close()
-		t.dev.Close()
+		t.if2 = nil
+	}
+	if t.cfg != nil {
+		if err := t.cfg.Close(); err != nil {
+			log.Println(err)
+		}
+		t.cfg = nil
+	}
+	if t.dev != nil {
+		if err := t.dev.Close(); err != nil {
+			log.Println(err)
+		}
 		t.dev = nil
-		return t.ctx.Close()
+	}
+	if t.ctx != nil {
+		if err := t.ctx.Close(); err != nil {
+			log.Println(err)
+		}
+		t.ctx = nil
 	}
 	return nil
 }
 
 func (t *nTemper) Read() (*temper.Readings, error) {
+	return t.read(0x48)
+}
+
+func (t *nTemper) read(cb byte) (*temper.Readings, error) {
 
 	if se := t.sendCommand(10, 11, 12, 13, 0, 0, 2, 0); se != nil {
 		return nil, se
 	}
-	if se := t.sendCommand(0x48, 0, 0, 0, 0, 0, 0, 0); se != nil {
+	if se := t.sendCommand(cb, 0, 0, 0, 0, 0, 0, 0); se != nil {
 		return nil, se
 	}
 	for i := 0; i < 7; i++ {
