@@ -55,10 +55,10 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 		return nil, err
 	}
 
-	if _, err = nt.read(0x52); err != nil {
-		nt.Close()
-		return nil, err
-	}
+	//if _, err = nt.read(0x52); err != nil {
+	//	nt.Close()
+	//	return nil, err
+	//}
 	return &nt, nil
 }
 
