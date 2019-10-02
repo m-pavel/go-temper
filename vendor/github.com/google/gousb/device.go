@@ -20,6 +20,7 @@ import (
 	"sort"
 	"sync"
 	"time"
+	"log"
 )
 
 // DeviceDesc is a representation of a USB device descriptor.
