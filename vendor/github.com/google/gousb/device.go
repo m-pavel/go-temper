@@ -147,7 +147,7 @@ func (d *Device) Config(cfgNum int) (*Config, error) {
 		claimed: make(map[int]bool),
 	}
 
-	log.Printf("Detach %b\n", d.autodetach)
+	log.Printf("Detach %v\n", d.autodetach)
 	if d.autodetach {
 		for _, iface := range cfg.Desc.Interfaces {
 			if err := d.ctx.libusb.detachKernelDriver(d.handle, uint8(iface.Number)); err != nil {
