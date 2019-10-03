@@ -121,10 +121,19 @@ func (t *nTemper) read(cb byte) (*temper.Readings, error) {
 }
 
 func (t *nTemper) sendCommand(v []byte) error {
+	if len(v) > 32 {
+		return errors.New("Too long request")
+	}
+
 	if t.debug {
 		fmt.Printf("sending bytes %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x\n", v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7])
 	}
-	_, err := t.dev.Control(0x21, 9, 0x200, 0x01, v)
+	req32 := make([]byte, 32)
+	for i := 0; i < len(v); i++ {
+		req32[i] = v[i]
+	}
+
+	_, err := t.dev.Control(0x21, 9, 0x200, 0x01, req32)
 	return err
 }
 
