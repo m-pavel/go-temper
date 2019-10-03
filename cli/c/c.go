@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/m-pavel/go-temper/cli"
+	"github.com/m-pavel/go-temper/pkg-c"
 )
 
 func main() {

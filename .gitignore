@@ -2,3 +2,6 @@ HID-TEMPerHUM/
 .idea
 temper-influx-cli
 temper-mqtt-cli
+cli-c
+cli-native
+cli-hid
