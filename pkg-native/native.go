@@ -27,7 +27,7 @@ func New(devicenum, timeout int, debug bool) (temper.Temper, error) {
 	nt.ctx = gousb.NewContext()
 
 	if debug {
-		nt.ctx.Debug(3)
+		nt.ctx.Debug(99)
 	}
 
 	var err error
